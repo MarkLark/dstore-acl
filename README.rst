@@ -25,21 +25,21 @@ Minimal Example
 
 
     class UserAccount( Model ):
-    _namespace = "users.account"
-    _vars = [
-        var.RowID,
-        var.String( "name", 32, mods = [ mod.NotNull() ])
-    ]
-    _acl_rules = dict(
-        add_own       = dict( default = True ),
-        add_others    = dict( default = True ),
-        read_own      = dict( allow = [ "admin", "member" ] ),
-        read_others   = dict( allow = [ "admin" ] ),
-        update_own    = dict( allow = [ "admin", "member" ] ),
-        delete_own    = dict( allow = [ "admin" ] ),
-        delete_others = dict( allow = [ "admin" ] ),
-        empty         = dict( allow = [ "admin" ])
-    )
+        _namespace = "users.account"
+        _vars = [
+            var.RowID,
+            var.String( "name", 32, mods = [ mod.NotNull() ])
+        ]
+        _acl_rules = dict(
+            add_own       = dict( default = True ),
+            add_others    = dict( default = True ),
+            read_own      = dict( allow = [ "admin", "member" ] ),
+            read_others   = dict( allow = [ "admin" ] ),
+            update_own    = dict( allow = [ "admin", "member" ] ),
+            delete_own    = dict( allow = [ "admin" ] ),
+            delete_others = dict( allow = [ "admin" ] ),
+            empty         = dict( allow = [ "admin" ])
+        )
 
 
     class Car( Model ):
