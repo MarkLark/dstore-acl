@@ -153,7 +153,7 @@ class ACLHelper( object ):
             if len( instances ) == 0: raise AccessDenied()
 
     def _get_action( self, action, throw_error = True ):
-        if isinstance( action, basestring ):
+        if isinstance( action, str ):
             try:
                 action = Action.filter( name = action, model = self.model._namespace )[0]
             except InstanceNotFound:
@@ -165,7 +165,7 @@ class ACLHelper( object ):
         return action
 
     def _get_role( self, role, throw_error = True ):
-        if isinstance( role, basestring ):
+        if isinstance( role, str ):
             try:
                 role = Role.filter( name = role )[0]
             except InstanceNotFound:
