@@ -10,6 +10,6 @@ install:
   - pip install -q -r dev_requirements.txt
   - pip install coveralls
 script:
-  - nosetests -vs tests --with-coverage --cover-package=dstore
+  - nosetests -vs tests --with-coverage --cover-package=dstore_acl
 after_success:
   - coveralls
