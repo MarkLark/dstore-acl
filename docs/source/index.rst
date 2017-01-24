@@ -6,6 +6,18 @@
 Welcome to DStore-ACL's documentation!
 ======================================
 
+.. image:: https://img.shields.io/coveralls/MarkLark/dstore-acl.svg
+    :target: https://coveralls.io/github/MarkLark/dstore-acl?branch=master
+
+.. image:: https://img.shields.io/travis/MarkLark/dstore-acl/master.svg
+    :target: https://travis-ci.org/MarkLark/dstore-acl
+
+.. image:: https://img.shields.io/pypi/v/dstore-acl.svg
+    :target: https://pypi.python.org/pypi/dstore-acl
+
+.. image:: https://img.shields.io/pypi/pyversions/dstore-acl.svg
+    :target: https://pypi.python.org/pypi/dstore-acl
+
 DStore-ACL is a Security Layer for DStore.
 Simply by provide the ACL when describing your Models, and DStore-ACL will do the rest.
 
