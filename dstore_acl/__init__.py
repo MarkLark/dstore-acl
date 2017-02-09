@@ -5,3 +5,4 @@ from . import Error
 
 
 __all__ = [ "Role", "Action", "Rule", "UserRole", "ACL", "AccessDenied", "Error", "ActionNotFound" ]
+__version__ = '0.1.1'

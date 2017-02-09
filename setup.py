@@ -10,7 +10,7 @@ with open( path.join( root_dir, 'README.rst' ), encoding = 'utf-8' ) as f:
 
 setup(
     name='DStore-ACL',
-    version='0.1.0a1',
+    version='0.1.1',
     url = 'https://github.com/MarkLark/dstore-acl',
     license='MIT',
     author='Mark Pittaway',
@@ -22,7 +22,7 @@ setup(
     include_package_data=True,
     platforms='any',
     install_requires=[
-        'dstore'
+        'dstore>=0.1.1'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
