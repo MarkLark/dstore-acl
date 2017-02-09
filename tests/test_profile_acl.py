@@ -32,22 +32,20 @@ class Profile_ACL( BaseTest ):
 
     def test_update_others( self ):
         admin = self.get_user( "admin" )
-        UserProfile( nickname = "Miny", users_account_id = admin.id ).add()
+        admin_prof = UserProfile( nickname = "Miny", users_account_id = admin.id ).add()
 
         member = self.get_user( "member" )
-        UserProfile( nickname = "Membrain", users_account_id = member.id ).add()
+        member_prof = UserProfile( nickname = "Membrain", users_account_id = member.id ).add()
 
         # Admin can update Member profile
         self.user = "admin"
-        profile = UserProfile.filter( users_account_id = member.id )[0]
-        profile.nickname = "Mobrain"
-        profile.update()
+        member_prof.nickname = "Mobrain"
+        member_prof.update()
 
         # Member cannot update Admin profile
         self.user = "member"
-        profile = UserProfile.filter(users_account_id=admin.id)[0]
-        profile.nickname = "Aiden"
-        self.assertRaises( AccessDenied, profile.update )
+        admin_prof.nickname = "Aiden"
+        self.assertRaises( AccessDenied, admin_prof.update )
 
     def test_delete_own( self ):
         guest = self.get_user( "guest" )
@@ -61,20 +59,18 @@ class Profile_ACL( BaseTest ):
 
     def test_delete_others( self ):
         admin = self.get_user( "admin" )
-        UserProfile( nickname = "Miny", users_account_id = admin.id ).add()
+        admin_prof = UserProfile( nickname = "Miny", users_account_id = admin.id ).add()
 
         member = self.get_user( "member" )
-        UserProfile( nickname = "Membrain", users_account_id = member.id ).add()
+        member_prof = UserProfile( nickname = "Membrain", users_account_id = member.id ).add()
 
         # Admin can delete Member profile
         self.user = "admin"
-        profile = UserProfile.filter( users_account_id = member.id )[ 0 ]
-        profile.delete()
+        member_prof.delete()
 
         # Member cannot delete Admin profile
         self.user = "member"
-        profile = UserProfile.filter(users_account_id=admin.id)[0]
-        self.assertRaises( AccessDenied, profile.delete )
+        self.assertRaises( AccessDenied, admin_prof.delete )
 
     def test_get_own( self ):
         member = self.get_user( "member" )
