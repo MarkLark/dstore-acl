@@ -1,6 +1,6 @@
-from nose.tools import ok_, eq_, raises, assert_raises
+from nose.tools import raises
 from . import BaseTest, Car, Model, var, mod
-from dstore_acl import ACL, Rule, Role, Action, AccessDenied, ActionNotFound
+from dstore_acl import Rule, Role, Action, AccessDenied, ActionNotFound
 
 
 class Car_ACL( BaseTest ):
