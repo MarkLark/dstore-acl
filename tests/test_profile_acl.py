@@ -18,10 +18,9 @@ class Profile_ACL( BaseTest ):
         UserProfile( nickname = "Miny", users_account_id = user.id ).add()
 
         # Member cannot add a profile for Admin
-        with assert_raises( AccessDenied ):
-            user = self.get_user( "admin" )
-            self.user = "member"
-            UserProfile( nickname = "Membrain", users_account_id = user.id ).add()
+        user = self.get_user("admin")
+        self.user = "member"
+        self.assertRaises( AccessDenied, UserProfile( nickname = "Membrain", users_account_id = user.id ).add )
 
     def test_update_own( self ):
         user = self.get_user( "admin" )
@@ -45,11 +44,10 @@ class Profile_ACL( BaseTest ):
         profile.update()
 
         # Member cannot update Admin profile
-        with assert_raises( AccessDenied ):
-            self.user = "member"
-            profile = UserProfile.filter( users_account_id = admin.id )[0]
-            profile.nickname = "Aiden"
-            profile.update()
+        self.user = "member"
+        profile = UserProfile.filter(users_account_id=admin.id)[0]
+        profile.nickname = "Aiden"
+        self.assertRaises( AccessDenied, profile.update )
 
     def test_delete_own( self ):
         guest = self.get_user( "guest" )
@@ -74,10 +72,9 @@ class Profile_ACL( BaseTest ):
         profile.delete()
 
         # Member cannot delete Admin profile
-        with assert_raises( AccessDenied ):
-            self.user = "member"
-            profile = UserProfile.filter( users_account_id = admin.id )[ 0 ]
-            profile.delete()
+        self.user = "member"
+        profile = UserProfile.filter(users_account_id=admin.id)[0]
+        self.assertRaises( AccessDenied, profile.delete )
 
     def test_get_own( self ):
         member = self.get_user( "member" )
@@ -89,9 +86,8 @@ class Profile_ACL( BaseTest ):
         member = self.get_user( "member" )
         profile = UserProfile( nickname = "Membrain", users_account_id = member.id ).add()
 
-        with assert_raises( AccessDenied ):
-            self.get_user( "guest" )
-            UserProfile.get( profile.id )
+        self.get_user("guest")
+        self.assertRaises( AccessDenied, UserProfile.get, profile.id )
 
         self.get_user( "admin" )
         UserProfile.get( profile.id )
@@ -137,5 +133,4 @@ class Profile_ACL( BaseTest ):
         role   = Role.filter( name = "member" )[0]
         Rule( acl_action_id = action.id, acl_role_id = role.id, allow = False ).add()
 
-        with assert_raises( AccessDenied ):
-            UserProfile.filter( users_account_id = member.id )
+        self.assertRaises( AccessDenied, UserProfile.filter, users_account_id = member.id )

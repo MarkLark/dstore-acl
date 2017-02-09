@@ -6,9 +6,9 @@ from dstore_acl import Rule, Role, Action, AccessDenied, ActionNotFound
 class Car_ACL( BaseTest ):
     auto_add_users = True
 
+    @raises( ActionNotFound )
     def test_action_not_found( self ):
-        with assert_raises( ActionNotFound ):
-            Car.acl.something_new
+        action = Car.acl.something_new
 
     def test_add( self ):
         self.user = "admin"
@@ -18,8 +18,7 @@ class Car_ACL( BaseTest ):
         Car( manufacturer = "Holden", make = "Commodore", year = 2006 ).add()
 
         self.user = "guest"
-        with assert_raises( AccessDenied ):
-            Car( manufacturer = "Holden", make = "Commodore", year = 2005 ).add()
+        self.assertRaises( AccessDenied, Car( manufacturer = "Holden", make = "Commodore", year = 2005 ).add )
 
     def test_model_update( self ):
         self.user = "admin"
@@ -30,25 +29,21 @@ class Car_ACL( BaseTest ):
 
         self.user = "member"
         car.year = 2007
-        with assert_raises( AccessDenied ):
-            car.update()
+        self.assertRaises( AccessDenied, car.update )
 
         self.user = "guest"
         car.year = 2008
-        with assert_raises( AccessDenied ):
-            car.update()
+        self.assertRaises( AccessDenied, car.update )
 
     def test_model_delete( self ):
         self.user = "admin"
         car = Car( manufacturer = "Holden", make = "Commodore", year = 2005 ).add()
 
         self.user = "member"
-        with assert_raises( AccessDenied ):
-            car.delete()
+        self.assertRaises( AccessDenied, car.delete )
 
         self.user = "guest"
-        with assert_raises( AccessDenied ):
-            car.delete()
+        self.assertRaises( AccessDenied, car.delete )
 
         self.user = "admin"
         car.delete()
@@ -61,12 +56,10 @@ class Car_ACL( BaseTest ):
         Car( manufacturer = "Holden", make = "Commodore", year = 2006 ).add()
         Car( manufacturer = "Holden", make = "Commodore", year = 2007 ).add()
 
-        with assert_raises( AccessDenied ):
-            Car.empty()
+        self.assertRaises( AccessDenied, Car.empty )
 
         self.user = "guest"
-        with assert_raises( AccessDenied ):
-            Car.empty()
+        self.assertRaises( AccessDenied, Car.empty )
 
         self.user = "admin"
         Car.empty()
