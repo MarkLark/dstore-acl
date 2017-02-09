@@ -1,5 +1,5 @@
 from .ModelACL import ModelACL
-from . import Role, Action, Rule, UserRole, AccessDenied, ActionNotFound
+from . import AccessDenied
 
 
 class UserACL( ModelACL ):
