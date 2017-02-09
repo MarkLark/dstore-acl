@@ -2,7 +2,7 @@ from . import Role, Action, Rule, UserRole, AccessDenied, ActionNotFound
 from dstore.Error import InstanceNotFound
 
 
-class ACLHelper( object ):
+class BaseACL( object ):
     def __init__( self, acl, model ):
         self.acl        = acl
         self.model      = model
@@ -17,36 +17,6 @@ class ACLHelper( object ):
         self.model.events.after_all     += self._after_all
         self.model.events.after_get     += self._after_get
         self.model.events.after_filter  += self._after_filter
-
-        var_name = "%s_id" % self.acl.user_model._namespace.replace( ".", "_" )
-        var = self.model.get_var( var_name )
-
-        if var is not None or self.model == self.acl.user_model:
-            if self.model == self.acl.user_model: self.user_var_id = "id"
-            else                                : self.user_var_id = var_name
-
-            self.user_model = self.acl.user_model
-            self.actions = [
-                "add_own",
-                "add_others",
-                "read_own",
-                "read_others",
-                "update_own",
-                "update_others",
-                "delete_own",
-                "delete_others",
-                "empty"
-            ]
-        else:
-            self.user_model  = None
-            self.user_var_id = None
-            self.actions = [
-                "add",
-                "read",
-                "update",
-                "delete",
-                "empty"
-            ]
 
     def __getattr__( self, name ):
         not_acl = [ "acl", "model", "get_user", "user_model", "actions", "user_var_id" ]
@@ -87,73 +57,26 @@ class ACLHelper( object ):
         self._add_actions()
         self._add_default_rules()
 
-    def _owns_instance( self, instance, user = None ):
-        if user is None: user = self.get_user()
-        owner_id = instance.__dict__[ self.user_var_id ]
-
-        if user is None: return False
-        elif user.id == owner_id: return True
-        return False
-
     def _before_empty( self, event, model ):
-        self( "empty" )
+        raise NotImplementedError("Must implement _before_empty method")
 
     def _before_add( self, event, model, instance ):
-        action = "add"
-        if self.user_model is not None:
-            if self._owns_instance( instance ): action = "add_own"
-            else                              : action = "add_others"
-        self( action )
+        raise NotImplementedError( "Must implement _before_add method" )
 
     def _before_update( self, event, model, instance ):
-        action = "update"
-        if self.user_model is not None:
-            if self._owns_instance( instance ): action = "update_own"
-            else                              : action = "update_others"
-        self( action )
+        raise NotImplementedError( "Must implement _before_update method" )
 
     def _before_delete( self, event, model, instance ):
-        action = "delete"
-        if self.user_model is not None:
-            if self._owns_instance( instance ): action = "delete_own"
-            else                              : action = "delete_others"
-        self( action )
-
-    def _filter_read_list( self, instances ):
-        user, role  = self._get_role_from_user()
-        read_own    = self( "read_own",    role, False )
-        read_others = self( "read_others", role, False )
-
-        i = 0
-        for instance in list( instances ):
-            if self._owns_instance( instance, user ):
-                if not read_own:
-                    instances.pop( i )
-                    continue
-            else:
-                if not read_others:
-                    instances.pop( i )
-                    continue
-            i += 1
+        raise NotImplementedError("Must implement _before_delete method")
 
     def _after_all( self, event, model, instances ):
-        if self.user_model is None: self( "read" )
-        else:
-            self._filter_read_list( instances )
-            if len( instances ) == 0: raise AccessDenied()
+        raise NotImplementedError("Must implement _after_all method")
 
     def _after_get( self, event, model, instance ):
-        action = "read"
-        if self.user_model is not None:
-            if self._owns_instance( instance ): action = "read_own"
-            else                              : action = "read_others"
-        self( action )
+        raise NotImplementedError("Must implement _after_get method")
 
     def _after_filter( self, event, model, instances, params ):
-        if self.user_model is None: self( "read" )
-        else:
-            self._filter_read_list( instances )
-            if len( instances ) == 0: raise AccessDenied()
+        raise NotImplementedError("Must implement _after_filter method")
 
     def _get_action( self, action, throw_error = True ):
         if isinstance( action, str ):
