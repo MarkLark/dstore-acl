@@ -37,7 +37,7 @@ class UserACL( ModelACL ):
 
     def _after_all( self, event, model, instances ):
         self._filter_read_list( instances )
-        if len( instances ) == 0: raise AccessDenied()
+        if len( instances ) == 0: raise AccessDenied( model._store, model, "all" )
 
     def _after_get( self, event, model, instance ):
         if self._owns_instance( instance ): self("read_own")
@@ -45,7 +45,7 @@ class UserACL( ModelACL ):
 
     def _after_filter( self, event, model, instances, params ):
         self._filter_read_list( instances )
-        if len( instances ) == 0: raise AccessDenied()
+        if len( instances ) == 0: raise AccessDenied( model._store, model, "filter" )
 
     def _filter_read_list( self, instances ):
         user, role  = self._get_role_from_user()

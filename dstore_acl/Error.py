@@ -1,5 +1,13 @@
+from dstore.Error import ModelError
 
-class AccessDenied( Exception ): pass
+
+class AccessDenied( ModelError ):
+    def __init__( self, store, model, action ):
+        super( AccessDenied, self ).__init__(
+            store,
+            model,
+            "Access denied to %s %s.%s" % (action, store.name, model._namespace)
+        )
 
 
 class ActionNotFound( Exception ):

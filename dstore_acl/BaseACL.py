@@ -83,7 +83,7 @@ class BaseACL( object ):
             try:
                 action = Action.filter( name = action, model = self.model._namespace )[0]
             except InstanceNotFound:
-                if throw_error: raise AccessDenied()
+                if throw_error: raise AccessDenied( self.model._store, self.model, action )
                 return False
         elif not isinstance( action, Action ):
             raise RuntimeError( "Incorrect Action instance supplied" )
@@ -95,7 +95,7 @@ class BaseACL( object ):
             try:
                 role = Role.filter( name = role )[0]
             except InstanceNotFound:
-                if throw_error: raise AccessDenied()
+                if throw_error: raise AccessDenied( self.model._store, self.model, "" )
                 return False
         elif not isinstance( role, Role ):
             raise RuntimeError( "Incorrect Role instance supplied. %s.%s" )
@@ -109,7 +109,7 @@ class BaseACL( object ):
         if not action: return False
 
         if role is None:
-            if throw_error and not action.fallback: raise AccessDenied()
+            if throw_error and not action.fallback: raise AccessDenied( self.model._store, self.model, action )
             return action.fallback
 
         role = self._get_role( role, throw_error )
@@ -118,10 +118,10 @@ class BaseACL( object ):
         try:
             rule = Rule.filter( acl_role_id = role.id, acl_action_id = action.id )[0]
         except InstanceNotFound:
-            if not action.fallback and throw_error: raise AccessDenied()
+            if not action.fallback and throw_error: raise AccessDenied( self.model._store, self.model, action )
             return action.fallback
 
-        if throw_error and not rule.allow: raise AccessDenied()
+        if throw_error and not rule.allow: raise AccessDenied( self.model._store, self.model, action )
         return rule.allow
 
     def add_rules( self, rules ):
