@@ -52,7 +52,10 @@ class ACLHelper( object ):
         not_acl = [ "acl", "model", "get_user", "user_model", "actions", "user_var_id" ]
         if name in not_acl: return self.__dict__[ name ]
         if name not in self.actions: raise ActionNotFound( self.model, name )
-        return Action.filter( model = self.model._namespace, name = name )[0]
+        try:
+            return Action.filter( model = self.model._namespace, name = name )[0]
+        except InstanceNotFound:
+            raise ActionNotFound( self.model, name )
 
     def _has_actions( self ):
         try:
